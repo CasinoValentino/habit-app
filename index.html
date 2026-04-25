@@ -2,189 +2,75 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HabitQuest RPG</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --bg-color: #0d1117;
-            --card-bg: rgba(22, 27, 34, 0.8);
+            --card-bg: #161b22;
             --accent-color: #58a6ff;
             --text-color: #c9d1d9;
-            --xp-color: #238636;
-            --gold: #f3ca20;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
-            background-image: radial-gradient(circle at top right, #161b22, #0d1117);
             color: var(--text-color);
             margin: 0;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        /* Карточка профиля */
-        .profile-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid #30363d;
-            border-radius: 20px;
-            padding: 20px;
-            width: 100%;
-            max-width: 350px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
             text-align: center;
         }
-
-        .avatar-glow {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin: 0 auto 10px;
-            background: linear-gradient(45deg, var(--accent-color), #bc8cff);
-            padding: 3px;
-            box-shadow: 0 0 20px rgba(88, 166, 255, 0.4);
-        }
-
-        .avatar-glow img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: #0d1117;
-        }
-
-        h2 { margin: 10px 0 5px; color: white; }
-        .level-badge { color: var(--accent-color); font-weight: bold; font-size: 0.9em; text-transform: uppercase; }
-
-        /* Полоска опыта */
-        .xp-container {
-            background: #21262d;
-            height: 12px;
-            border-radius: 6px;
-            margin: 15px 0;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .xp-bar {
-            background: linear-gradient(90deg, #238636, #2ea043);
-            width: 65%; /* Это значение потом будет меняться динамически */
-            height: 100%;
-            border-radius: 6px;
-            transition: width 1s ease-in-out;
-            box-shadow: 0 0 10px rgba(46, 160, 67, 0.5);
-        }
-
-        /* Список привычек */
-        .habit-item {
+        .profile-card {
             background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
             border: 1px solid #30363d;
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 10px;
-            width: 100%;
-            max-width: 350px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: transform 0.2s;
+            margin-bottom: 20px;
         }
-
-        .habit-item:active { transform: scale(0.98); }
-
-        .habit-info h4 { margin: 0; color: white; }
-        .habit-info p { margin: 5px 0 0; font-size: 0.8em; color: #8b949e; }
-
-        .btn-complete {
-            background: var(--accent-color);
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+        .btn-action {
+            background-color: #238636;
             color: white;
             border: none;
-            padding: 10px 15px;
-            border-radius: 10px;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
+            width: 100%;
         }
-
-        /* Секция достижений */
-        .achievements {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            justify-content: center;
-        }
-
-        .ach-icon {
-            font-size: 1.2em;
-            filter: grayscale(1);
-            opacity: 0.5;
-        }
-
-        .ach-icon.unlocked {
-            filter: grayscale(0);
-            opacity: 1;
-            text-shadow: 0 0 10px var(--gold);
-        }
-
-    </script>
+    </style>
 </head>
 <body>
+    <div class="profile-card">
+        <h2 id="user-name">Загрузка героя...</h2>
+        <div class="stats">
+            <div>🏅 LVL: <span id="level">1</span></div>
+            <div>✨ XP: <span id="xp">0</span></div>
+        </div>
+    </div>
 
     <div class="profile-card">
-        <div class="avatar-glow">
-            <img src="https://via.placeholder.com/80" alt="Hero">
-        </div>
-        <div class="level-badge">Уровень 5 • Мастер Дисциплины</div>
-        <h2>Герой Прогресса</h2>
-        
-        <div class="xp-container">
-            <div class="xp-bar" id="xpBar"></div>
-        </div>
-        <p style="font-size: 0.8em;">650 / 1000 XP до LVL 6</p>
-
-        <div class="achievements">
-            <span class="ach-icon unlocked" title="Первый шаг">🔥</span>
-            <span class="ach-icon unlocked" title="Неделя без пропусков">🛡️</span>
-            <span class="ach-icon" title="Мастер 30 дней">👑</span>
-            <span class="ach-icon" title="Премиум игрок">💎</span>
-        </div>
-    </div>
-
-    <div class="habit-item">
-        <div class="habit-info">
-            <h4>Утренняя зарядка</h4>
-            <p>Стрик: 7 дней 🔥</p>
-        </div>
-        <button class="btn-complete" onclick="completeHabit('Зарядка')">Выполнить</button>
-    </div>
-
-    <div class="habit-item">
-        <div class="habit-info">
-            <h4>Чтение книг</h4>
-            <p>Стрик: 3 дня 🔥</p>
-        </div>
-        <button class="btn-complete" onclick="completeHabit('Чтение')">Выполнить</button>
+        <h3>🎯 Твоя задача на сегодня:</h3>
+        <p>Выполнить все привычки и стать сильнее!</p>
+        <button class="btn-action" onclick="sendDone()">✅ ОТМЕТИТЬ ВСЁ</button>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.headerColor = '#0d1117';
+        tg.expand(); // Развернуть на весь экран
+        
+        // Отображаем имя пользователя из Telegram
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            document.getElementById('user-name').innerText = tg.initDataUnsafe.user.first_name;
+        }
 
-        function completeHabit(name) {
-            // Визуальный эффект
-            tg.HapticFeedback.notificationOccurred('success');
-            
-            // Отправка данных боту
-            tg.sendData("done:" + name);
-            
-            // Красивое закрытие (по желанию)
-            // tg.close();
+        function sendDone() {
+            tg.sendData("all_habits_done"); // Отправляем сигнал боту
         }
     </script>
 </body>
