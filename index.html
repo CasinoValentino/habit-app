@@ -2,76 +2,50 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HabitQuest RPG</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --bg-color: #0d1117;
-            --card-bg: #161b22;
-            --accent-color: #58a6ff;
-            --text-color: #c9d1d9;
-            --xp-color: #238636;
-        }
+        body { background: #0d1117; color: #c9d1d9; font-family: sans-serif; padding: 20px; text-align: center; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 15px; margin-bottom: 10px; }
+        .btn { background: #238636; color: white; border: none; padding: 10px; border-radius: 6px; width: 100%; cursor: pointer; }
+        .xp-bar { background: #30363d; height: 8px; border-radius: 4px; margin: 10px 0; overflow: hidden; }
+        .xp-fill { background: #58a6ff; height: 100%; width: 30%; }
+    </style>
+</head>
+<body>
+    <h2>Герой: <span id="user-name">Загрузка...</span></h2>
+    <div class="card">
+        <p>Уровень <span id="lvl">1</span></p>
+        <div class="xp-bar"><div id="xp-fill" class="xp-fill"></div></div>
+    </div>
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    <div id="habits-list">
+        <p>Привычки загружаются...</p>
+    </div>
 
-        /* Профиль */
-        .profile-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 20px;
-            width: 100%;
-            max-width: 350px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border: 1px solid #30363d;
-            margin-bottom: 20px;
-        }
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        
+        // Получаем имя пользователя из Telegram
+        document.getElementById('user-name').innerText = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.first_name : "Странник";
 
-        .avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 2px solid var(--accent-color);
-            margin-bottom: 10px;
+        // Функция, которую мы вызовем позже для отрисовки привычек
+        function renderHabits(habits) {
+            const list = document.getElementById('habits-list');
+            list.innerHTML = '';
+            habits.forEach(h => {
+                list.innerHTML += `
+                    <div class="card">
+                        <h3>${h.name}</h3>
+                        <p>Стрик: ${h.streak} 🔥</p>
+                        <button class="btn" onclick="done('${h.id}')">Выполнить</button>
+                    </div>`;
+            });
         }
-
-        .level-badge {
-            background: var(--accent-color);
-            color: white;
-            padding: 2px 10px;
-            border-radius: 10px;
-            font-size: 0.8em;
-            font-weight: bold;
+        
+        function done(id) {
+            tg.sendData("done_" + id); // Отправляем боту сигнал, что привычка выполнена
         }
-
-        .xp-bar-container {
-            background: #30363d;
-            height: 10px;
-            border-radius: 5px;
-            margin: 15px 0;
-            overflow: hidden;
-        }
-
-        .xp-bar-fill {
-            background: var(--xp-color);
-            height: 100%;
-            width: 65%; /* Динамическое значение */
-            transition: width 0.5s ease;
-        }
-
-        /* Список привычек */
-        .habits-list {
-            width: 100%;
-            max-width: 350px;
-        }
+    </script>
+</body>
+</html>
